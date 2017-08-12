@@ -90,10 +90,11 @@ void leftShiftBits(Bits b, int shift, Bits res)
 	Word mask;
 	for (currWord = 0; currWord < b->nwords; currWord++) {
 		res->words[currWord] = 0;
-		for (mask= 1<<shift, currIndex=shift; currIndex < 32; currIndex--, mask<<=1) {
-			finalWord = (currIndex+shift)/BITS_PER_WORD + currWord;
-			if (finalWord >= b->nwords) continue;
-			res->words[finalWord] |= (b->words[currWord] & mask) >> shift%32; 
+		for (mask= charToUInt(1)<<(31-(shift%32)), currIndex=shift%32; currIndex < 32; currIndex++, mask>>=1) {
+			finalWord = currWord + 
+                ((currIndex-shift < 0) ? (currIndex-shift)/BITS_PER_WORD - 1 : (currIndex-shift)/BITS_PER_WORD);
+			if (finalWord < 0) continue;
+			res->words[finalWord] |= (b->words[currWord] & mask) << shift%32; 
 		}
 	}
 }
@@ -105,7 +106,7 @@ void rightShiftBits(Bits b, int shift, Bits res)
 	Word mask;
 	for (currWord = b->nwords-1; currWord >= 0; currWord--) {
 		res->words[currWord] = 0;
-		for (mask= 1<<shift, currIndex=31-shift; currIndex>=0; currIndex--, mask<<=1) {
+		for (mask= charToUInt(1)<<shift%32, currIndex=31-shift%32; currIndex>=0; currIndex--, mask<<=1) {
 			finalWord = (currIndex+shift)/BITS_PER_WORD + currWord;
 			if (finalWord >= b->nwords) continue;
 			res->words[finalWord] |= (b->words[currWord] & mask) >> shift%32; 
