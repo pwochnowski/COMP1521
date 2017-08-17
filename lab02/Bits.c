@@ -100,6 +100,7 @@ void leftShiftBits(Bits b, int shift, Bits res)
 }
 
 // right shift Bits
+
 void rightShiftBits(Bits b, int shift, Bits res)
 {
 	int finalWord, currIndex, currWord;
@@ -131,7 +132,6 @@ int min(int a, int b) {
 void setBitsFromString(Bits b, char *bitseq)
 {
 	int count = min(strlen(bitseq), b->nwords*BITS_PER_WORD);
-
 	int j=b->nwords;
 	for (int i=0; i<count; i++) {
 		if (i%32 == 0) b->words[--j]=0;
@@ -153,7 +153,7 @@ void showBits(Bits b)
 		mask <<= 31;
 		for (int j = 0; j < 32; j++) {
 			printf("%d", (b->words[i] & mask) ? 1 : 0);
-			mask >>= 1;
+			mask >>= 1u;
 		}
 	}
 }
