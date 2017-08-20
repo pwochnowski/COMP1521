@@ -1,0 +1,12 @@
+#ignore everything
+*
+
+#except for these files
+!.gitignore
+!*.c
+!*.h
+!Makefile
+!*.txt
+
+
+
