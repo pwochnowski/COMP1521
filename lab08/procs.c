@@ -10,34 +10,39 @@
 
 void copyInput(char *);
 
-int main(void)
-{
-   struct sigaction act;
-   memset (&act, 0, sizeof(act));
+void handler (int sig) {
+  printf ("Got signal %d\n", sig);
+}
 
-   if (fork() != 0) {
-      signal(SIGINT, SIG_IGN);
-      copyInput("Parent");
-   }
-   else if (fork() != 0) {
-      //signal(SIGINT, SIG_IGN);
-      copyInput("Child");
-   }
-   else {
-      copyInput("Grand-child");
-   }
-   return 0;
+int  main(void) {
+  struct sigaction act;
+  memset (&act, 0, sizeof(act));
+
+  if (fork() != 0) {
+    struct sigaction act;
+    act.sa_handler = &handler;
+    int ret = sigaction(SIGSTOP, &act, NULL);
+    printf("return: %d\n", ret);
+    copyInput("Parent");
+  }
+  else if (fork() != 0) {
+    copyInput("Child");
+  }
+  else {
+    copyInput("Grand-child");
+  }
+  return 0;
 }
 
 void copyInput(char *name)
 {
-   pid_t mypid = getpid();
-   char  line[MAXLINE];
-   printf("%s (%d) ready\n", name, mypid);
-   while (fgets(line, MAXLINE, stdin) != NULL) {
-      printf("%s: %s", name, line);
-      sleep(1);
-   }
-   printf("%s quitting\n", name);
-   return;
+  pid_t mypid = getpid();
+  char  line[MAXLINE];
+  printf("%s (%d) ready\n", name, mypid);
+  while (fgets(line, MAXLINE, stdin) != NULL) {
+    printf("%s: %s", name, line);
+    sleep(random()%3);
+  }
+  printf("%s quitting\n", name);
+  return;
 }
